@@ -1,0 +1,29 @@
+# Trips and Users
+
+select T.Request_at Day,
+round(sum(case when T.Status like 'cancelled_%' then 1 else 0 end)/count(T.Status),2) 'Cancellation Rate'
+from Trips T
+inner join Users U
+on T.Client_Id=U.Users_Id and U.Banned = 'No'
+where T.Request_at between '2013-10-01' and '2013-10-03'
+group by T.Request_at
+
+# Department Top Three Salaries
+
+select d.Name Department, e1.Name Employee, e1.Salary
+from Employee e1 
+join Department d
+on e1.DepartmentId = d.Id
+where 3 > (select count(distinct(e2.Salary)) 
+                  from Employee e2 
+                  where e2.Salary > e1.Salary 
+                  and e1.DepartmentId = e2.DepartmentId
+                  );
+     
+# Human Traffic of Stadium
+
+select distinct s1.id, s1.date, s1.people
+from stadium s1, stadium s2, stadium s3
+where s1.people >= 100 and s2.people >=100 and s3.people>=100
+and ((s2.id = s1.id + 1 and s3.id = s2.id +1) or (s2.id =s1.id-1 and s3.id = s2.id -1) or (s1.id = s2.id + 1 and s3.id = s1.id +1))
+order by s1.id
